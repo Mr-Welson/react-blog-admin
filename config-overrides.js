@@ -1,5 +1,5 @@
 // 用于修改webpack默认配置
-const { override, overrideDevServer, addWebpackAlias, fixBabelImports, addLessLoader, addDecoratorsLegacy } = require('customize-cra');
+const { override, overrideDevServer, addWebpackAlias, fixBabelImports, addLessLoader, addDecoratorsLegacy, adjustStyleLoaders } = require('customize-cra');
 
 const CompressionWebpackPlugin = require('compression-webpack-plugin');
 // const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
@@ -76,15 +76,25 @@ module.exports = {
       libraryDirectory: 'es',
       style: true, // 自动打包相关的样式 默认为 style:'css'
     }),
-    // 使用less-loader对源码重的less的变量进行重新制定，设置antd自定义主题
+    // 使用less-loader对源码中的less的变量进行重新制定，设置antd自定义主题
     addLessLoader({
-      javascriptEnabled: true,
-      modifyVars: {
-        hack: `true;@import "${require.resolve('antd/lib/style/color/colorPalette.less')}";`,
-        // ...darkThemeVars,
-        '@primary-color': '#125bb6',
+      lessOptions: {
+        javascriptEnabled: true,
+        modifyVars: {
+          // hack: `true;@import "${require.resolve('antd/lib/style/color/colorPalette.less')}";`,
+          // ...darkThemeVars,
+          '@primary-color': '#125bb6',
+        },
+        localIdentName: '[local]--[hash:base64:5]',
+        // cssModules: {
+        //   // if you use CSS Modules, and custom `localIdentName`, default is '[local]--[hash:base64:5]'.
+        //   localIdentName: '[path][name]__[local]--[hash:base64:5]',
+        // },
       },
-      localIdentName: '[local]--[hash:base64:5]', // use less-modules
+    }),
+    adjustStyleLoaders(({ use: [, , postcss] }) => {
+      const postcssOptions = postcss.options;
+      postcss.options = { postcssOptions };
     }),
     addAntdDayjsWebpackPlugin(),
     addDecoratorsLegacy()

@@ -4,7 +4,7 @@ import { ConfigProvider } from 'antd';
 import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import { IRoute } from '@/typings/route';
-import { pageRoutes } from '@/routes';
+import { staticRoutes } from '@/routes';
 import 'antd/dist/antd.css';
 import zhCN from 'antd/lib/locale/zh_CN';
 
@@ -15,7 +15,7 @@ function App() {
     <ConfigProvider locale={zhCN}>
       <Router>
         <Switch>
-          {pageRoutes.map((route: IRoute) => (
+          {staticRoutes.map((route: IRoute) => (
             <Route exact={route.exact} key={route.path} path={route.path} component={route.component} />
           ))}
           {/* <Route exact path='/login' component={Login} />
