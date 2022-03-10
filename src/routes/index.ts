@@ -1,8 +1,9 @@
+import { IRoute } from '@/typings/route';
 import Layout from '@/layout';
 import Login from '@/pages/login';
 import Home from '@/pages/home';
 import ModifyArticle from '@/pages/article/modify';
-import { IRoute } from '@/typings/route';
+import ArticleList from '@/pages/article/index';
 
 export const staticRoutes: IRoute[] = [
   {
@@ -33,5 +34,11 @@ export const pageRoutes: IRoute[] = [
     key: 'addArticle',
     name: '添加文章',
     component: ModifyArticle,
+  },
+  {
+    path: '/articleList',
+    key: 'articleList',
+    name: '文章列表',
+    component: ArticleList,
   },
 ];
