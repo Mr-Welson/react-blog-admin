@@ -4,6 +4,7 @@ import { Row, Col, Input, Select, Button, DatePicker, message } from 'antd';
 import { marked } from 'marked';
 // import hljs from 'highlight.js';
 import Service from '@/service';
+import type { IArticleInfo } from '@/typings/article';
 
 // const renderer = new Marked.Renderer();
 // renderer.heading = (text, level) => {
@@ -27,8 +28,15 @@ marked.setOptions({
   // },
 });
 
+type TypeInfo = {
+  id: number;
+  name: string;
+  order: number;
+  icon: string;
+};
+
 const ModifyArticle: React.FC = () => {
-  const [articleId, setArticleId] = useState<number>(0); // 文章的ID，如果是0说明是新增加，如果不是0，说明是修改
+  const [articleId, setArticleId] = useState<number | undefined>(undefined); // 文章的ID，如果是undefined说明是新增加，如果不是undefined，说明是修改
   const [articleTitle, setArticleTitle] = useState<string>(''); // 文章标题
   const [articleContent, setArticleContent] = useState<string>(''); // markdown的编辑内容
   const [markdownContent, setMarkdownContent] = useState<string>('预览内容'); // html内容
@@ -36,33 +44,83 @@ const ModifyArticle: React.FC = () => {
   const [introducehtml, setIntroducehtml] = useState<string>('等待编辑'); // 简介的html内容
   const [showDate, setShowDate] = useState<number>(); // 发布日期
   const [updateDate, setUpdateDate] = useState<number>(); // 修改日志的日期
-  const [typeInfo, setTypeInfo] = useState<number[]>([]); // 文章类别信息
+  const [typeInfo, setTypeInfo] = useState<TypeInfo[]>([]); // 文章类别信息
   const [selectedType, setSelectType] = useState<number>(1); // 选择的文章类别
 
+  // 获取文章分类列表
   useEffect(() => {
-    const getTypeList = async () => {
+    const fetchData = async () => {
       try {
         const result = await Service.post.getTypeList();
         if (result.code !== 200) {
           return message.error(result.message);
         }
+        setTypeInfo(result.data);
       } catch (error) {}
     };
-    getTypeList();
+    fetchData();
   }, []);
 
-  const onPublish = () => {};
+  // 文章内容change事件
   const onContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
     const content = e.target.value;
     setArticleContent(content);
     const html = marked.parse(content);
     setMarkdownContent(html);
   };
+  // 文章简介change事件
   const onIntroduceChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
     const content = e.target.value;
     setIntroducemd(content);
     const html = marked.parse(content);
     setIntroducehtml(html);
+  };
+  const onTypeChange = (value: number) => {
+    setSelectType(value);
+  };
+  const onPublishDateChange = (date: any) => {
+    setShowDate(date * 1);
+  };
+  // 发布事件
+  const onPublish = async () => {
+    if (!selectedType) {
+      message.error('必须选择文章类别');
+      return false;
+    } else if (!articleTitle) {
+      message.error('文章名称不能为空');
+      return false;
+    } else if (!articleContent) {
+      message.error('文章内容不能为空');
+      return false;
+    } else if (!introducemd) {
+      message.error('简介不能为空');
+      return false;
+    } else if (!showDate) {
+      message.error('发布日期不能为空');
+      return false;
+    }
+    try {
+      const data: IArticleInfo = {
+        typeId: selectedType,
+        title: articleTitle,
+        content: articleContent,
+        introduce: introducemd,
+        createTime: showDate,
+      };
+      const funcName = articleId ? 'updateArticle' : 'addArticle';
+      if (articleId) {
+        data.id = articleId;
+        data.viewCount = Math.ceil(Math.random() * 100) + 1000;
+      }
+      const result = await Service.post[funcName](data);
+      if (result.code !== 200) {
+        return message.error(result.message);
+      }
+      !articleId && setArticleId(result.data.id);
+      message.success('文章保存成功');
+    } catch (error) {
+      message.success('文章保存失败');
+    }
   };
   return (
     <div>
@@ -70,12 +128,24 @@ const ModifyArticle: React.FC = () => {
         <Col span={18}>
           <Row gutter={10}>
             <Col span={20}>
-              <Input placeholder='博客标题' size='large' />
+              <Input
+                placeholder='博客标题'
+                size='large'
+                value={articleTitle}
+                onChange={(e) => {
+                  setArticleTitle(e.target.value);
+                }}
+              />
             </Col>
             <Col span={4}>
               &nbsp;
-              <Select defaultValue='Sign Up' size='large'>
-                <Select.Option value='Sign Up'>视频教程</Select.Option>
+              <Select defaultValue={selectedType} size='large' onChange={onTypeChange}>
+                {!!typeInfo.length &&
+                  typeInfo.map((v) => (
+                    <Select.Option value={v.id} key={v.id}>
+                      {v.name}
+                    </Select.Option>
+                  ))}
               </Select>
             </Col>
           </Row>
@@ -116,7 +186,7 @@ const ModifyArticle: React.FC = () => {
 
             <Col span={12}>
               <div className='date-select'>
-                <DatePicker placeholder='发布日期' size='large' />
+                <DatePicker placeholder='发布日期' size='large' onChange={onPublishDateChange} />
               </div>
             </Col>
           </Row>
