@@ -8,9 +8,11 @@ type Api = {
 
 const api: Api = {
   getTypeList: `${baseApi}/getTypeList`,
-  articleList: `${baseApi}/queryArticleList`,
+  queryArticleList: `${baseApi}/queryArticleList`,
   addArticle: `${baseApi}/addArticle`,
   updateArticle: `${baseApi}/updateArticle`,
+  deleteArticle: `${baseApi}/deleteArticle/<id>`,
+  getArticleById: `${baseApi}/getArticleById/<id>`,
 };
 
 const postService = {
@@ -21,7 +23,7 @@ const postService = {
   },
   queryArticleList(data: object) {
     return request({
-      url: api.articleList,
+      url: api.queryArticleList,
       data,
     });
   },
@@ -36,6 +38,18 @@ const postService = {
       url: api.updateArticle,
       method: 'post',
       data,
+    });
+  },
+  deleteArticle(id: number) {
+    return request({
+      url: api.deleteArticle.replace('<id>', String(id)),
+      method: 'get',
+    });
+  },
+  getArticleById(id: number) {
+    return request({
+      url: api.getArticleById.replace('<id>', String(id)),
+      method: 'get',
     });
   },
 };

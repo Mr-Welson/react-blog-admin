@@ -15,7 +15,6 @@ const AppLayout: React.FC = () => {
   };
 
   const onMenuClick = (menuItem: any) => {
-    console.log(menuItem);
     history.push(menuItem.key);
   };
   return (
@@ -36,13 +35,13 @@ const AppLayout: React.FC = () => {
               </span>
             }
           >
-            <Menu.Item key='addArticle'>
-              <FileAddOutlined />
-              <span>添加文章</span>
-            </Menu.Item>
             <Menu.Item key='articleList'>
               <BarsOutlined />
               <span>文章列表</span>
+            </Menu.Item>
+            <Menu.Item key='addArticle'>
+              <FileAddOutlined />
+              <span>添加文章</span>
             </Menu.Item>
           </Menu.SubMenu>
           <Menu.Item key='message'>

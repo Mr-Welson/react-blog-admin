@@ -5,6 +5,7 @@ import { marked } from 'marked';
 // import hljs from 'highlight.js';
 import Service from '@/service';
 import type { IArticleInfo } from '@/typings/article';
+import { useParams } from 'react-router-dom';
 
 // const renderer = new Marked.Renderer();
 // renderer.heading = (text, level) => {
@@ -46,6 +47,33 @@ const ModifyArticle: React.FC = () => {
   const [updateDate, setUpdateDate] = useState<number>(); // 修改日志的日期
   const [typeInfo, setTypeInfo] = useState<TypeInfo[]>([]); // 文章类别信息
   const [selectedType, setSelectType] = useState<number>(1); // 选择的文章类别
+  const params: { id?: string } = useParams();
+
+  // 获取文章详情
+  const getArticleById = async (id: number) => {
+    try {
+      const result = await Service.post.getArticleById(id);
+      if (result.code !== 200) {
+        return message.error(result.message);
+      }
+      setArticleTitle(result.data.title);
+      setArticleContent(result.data.content);
+      const html = marked(result.data.content);
+      setMarkdownContent(html);
+      setIntroducemd(result.data.introduce);
+      const tmpInt = marked(result.data.introduce);
+      setIntroducehtml(tmpInt);
+      setShowDate(result.data.addTime);
+      setSelectType(result.data.typeId);
+    } catch (error) {}
+  };
+
+  useEffect(() => {
+    if (params.id) {
+      setArticleId(+params.id);
+      getArticleById(+params.id);
+    }
+  }, []);
 
   // 获取文章分类列表
   useEffect(() => {
@@ -75,9 +103,11 @@ const ModifyArticle: React.FC = () => {
     const html = marked.parse(content);
     setIntroducehtml(html);
   };
+  // 文章类型切换
   const onTypeChange = (value: number) => {
     setSelectType(value);
   };
+  // 修改发布时间
   const onPublishDateChange = (date: any) => {
     setShowDate(date * 1);
   };
@@ -122,6 +152,7 @@ const ModifyArticle: React.FC = () => {
       message.success('文章保存失败');
     }
   };
+
   return (
     <div>
       <Row gutter={5}>

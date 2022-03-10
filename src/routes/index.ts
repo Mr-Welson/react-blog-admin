@@ -30,7 +30,7 @@ export const pageRoutes: IRoute[] = [
     component: Home,
   },
   {
-    path: '/addArticle',
+    path: '/addArticle/:id?',
     key: 'addArticle',
     name: '添加文章',
     component: ModifyArticle,
