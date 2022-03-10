@@ -4,14 +4,14 @@ import { withRouter, useHistory } from 'react-router-dom';
 import './index.less';
 import { Card, Input, Button, Spin, message } from 'antd';
 import Service from '@/service';
+import { TOKEN_KEY } from '@/utils/auth';
 
 const Login: React.FC = () => {
-  const [username, setUsername] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
+  const [username, setUsername] = useState<string>('admin');
+  const [password, setPassword] = useState<string>('123456');
   const [loading, setLoading] = useState<boolean>(false);
   const history = useHistory();
   const onCheckLogin = async () => {
-    console.log(username, password);
     if (!username.trim()) {
       return message.error('用户名不能为空');
     }
@@ -20,13 +20,13 @@ const Login: React.FC = () => {
     }
     setLoading(true);
     try {
-      const { data } = await Service.user.login({ username, password });
-      console.log(data);
+      const result = await Service.user.login({ username, password });
       setLoading(false);
-      if (data.code !== 200) {
-        return message.error(data.message);
+      if (result.code !== 200) {
+        return message.error(result.message);
       }
-      sessionStorage.setItem('openId', data.openId);
+      // 身份验证信息
+      sessionStorage.setItem(TOKEN_KEY, result.data);
       history.push('/');
     } catch (error) {
       setLoading(false);
@@ -40,6 +40,7 @@ const Login: React.FC = () => {
           <Input
             id='userName'
             size='large'
+            value={username}
             placeholder='Enter your userName'
             prefix={<UserOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
             onChange={(e) => {
@@ -51,6 +52,7 @@ const Login: React.FC = () => {
           <Input.Password
             id='password'
             size='large'
+            value={password}
             placeholder='Enter your password'
             prefix={<KeyOutlined style={{ color: 'rgba(0,0,0,.25)' }} />}
             onChange={(e) => {
