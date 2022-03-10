@@ -1,5 +1,6 @@
 import { baseApi } from './config';
-import axios from 'axios';
+import { request } from './request';
+
 type Api = {
   [propName: string]: string;
 };
@@ -15,11 +16,11 @@ const api: Api = {
 
 const userService = {
   login(data: LoginParams) {
-    return axios({
+    return request({
       url: api.login,
       method: 'POST',
-      withCredentials: true,
       data,
+      contentType: 'json',
     });
   },
 };

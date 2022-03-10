@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './index.less';
-import { Row, Col, Input, Select, Button, DatePicker } from 'antd';
+import { Row, Col, Input, Select, Button, DatePicker, message } from 'antd';
 import { marked } from 'marked';
 // import hljs from 'highlight.js';
+import Service from '@/service';
 
 // const renderer = new Marked.Renderer();
 // renderer.heading = (text, level) => {
@@ -37,6 +38,18 @@ const ModifyArticle: React.FC = () => {
   const [updateDate, setUpdateDate] = useState<number>(); // 修改日志的日期
   const [typeInfo, setTypeInfo] = useState<number[]>([]); // 文章类别信息
   const [selectedType, setSelectType] = useState<number>(1); // 选择的文章类别
+
+  useEffect(() => {
+    const getTypeList = async () => {
+      try {
+        const result = await Service.post.getTypeList();
+        if (result.code !== 200) {
+          return message.error(result.message);
+        }
+      } catch (error) {}
+    };
+    getTypeList();
+  }, []);
 
   const onPublish = () => {};
   const onContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
