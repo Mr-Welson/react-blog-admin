@@ -15,7 +15,7 @@ const AppLayout: React.FC = () => {
   };
 
   const onMenuClick = (menuItem: any) => {
-    history.push(menuItem.key);
+    history.push(`/${menuItem.key}`);
   };
   return (
     <Layout style={{ minHeight: '100vh' }}>
