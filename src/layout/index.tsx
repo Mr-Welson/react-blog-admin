@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { IRoute } from '@/typings/route';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, useHistory } from 'react-router-dom';
 import { pageRoutes } from '@/routes';
 import './index.less';
 import { Layout, Menu, Breadcrumb } from 'antd';
@@ -8,22 +8,24 @@ import { DesktopOutlined, MessageOutlined, FileAddOutlined, FileOutlined, BarsOu
 const { Header, Content, Footer, Sider } = Layout;
 
 const AppLayout: React.FC = () => {
+  const history = useHistory();
   const [collapsed, setCollapsed] = useState<boolean>(false);
   const onCollapse = () => {
     setCollapsed((v) => !v);
+  };
+
+  const onMenuClick = (menuItem: any) => {
+    console.log(menuItem);
+    history.push(menuItem.key);
   };
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider collapsible collapsed={collapsed} onCollapse={onCollapse}>
         <div className='logo'></div>
-        <Menu theme='dark' defaultSelectedKeys={['workspace']} mode='inline'>
+        <Menu theme='dark' defaultSelectedKeys={['workspace']} mode='inline' onClick={onMenuClick}>
           <Menu.Item key='workspace'>
             <DesktopOutlined />
             <span>工作台</span>
-          </Menu.Item>
-          <Menu.Item key='addArticle'>
-            <FileAddOutlined />
-            <span>添加文章</span>
           </Menu.Item>
           <Menu.SubMenu
             key='article'
@@ -34,11 +36,11 @@ const AppLayout: React.FC = () => {
               </span>
             }
           >
-            <Menu.Item key='add'>
+            <Menu.Item key='addArticle'>
               <FileAddOutlined />
               <span>添加文章</span>
             </Menu.Item>
-            <Menu.Item key='list'>
+            <Menu.Item key='articleList'>
               <BarsOutlined />
               <span>文章列表</span>
             </Menu.Item>
