@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { IRoute } from '@/typings/route';
-import { Switch, Route, useHistory } from 'react-router-dom';
+import { Switch, Route, useHistory, Redirect } from 'react-router-dom';
 import { pageRoutes } from '@/routes';
 import './index.less';
 import { Layout, Menu, Breadcrumb } from 'antd';
@@ -62,6 +62,7 @@ const AppLayout: React.FC = () => {
               {pageRoutes.map((route: IRoute) => (
                 <Route exact={route.exact} key={route.path} path={route.path} component={route.component} />
               ))}
+              <Redirect exact from='/' to='/home' />
             </Switch>
           </div>
         </Content>

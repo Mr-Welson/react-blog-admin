@@ -5,8 +5,8 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/zh-cn';
 import { IRoute } from '@/typings/route';
 import { staticRoutes } from '@/routes';
-import 'antd/dist/antd.css';
 import zhCN from 'antd/lib/locale/zh_CN';
+import './App.less';
 
 dayjs.locale('zh-cn');
 

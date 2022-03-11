@@ -24,9 +24,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
-    "test": "react-app-rewired test"
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test"
   },
   "eslintConfig": {
     "extends": [
@@ -47,6 +47,7 @@
     ]
   },
   "devDependencies": {
+    "@craco/craco": "^6.4.3",
     "@types/marked": "^4.0.2",
     "@types/react-router-dom": "^5.3.3",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
@@ -54,6 +55,7 @@
     "antd-dayjs-webpack-plugin": "^1.0.6",
     "babel-plugin-import": "^1.13.3",
     "compression-webpack-plugin": "^9.2.0",
+    "craco-less": "^2.0.0",
     "customize-cra": "^1.0.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.5.0",
